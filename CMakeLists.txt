@@ -30,6 +30,6 @@ include_directories(
 )
 
 
-catkin_install_python(PROGRAMS scripts/rough_python.py
+catkin_install_python(PROGRAMS scripts/rough_python.py scripts/teleop_ui.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
