@@ -18,33 +18,19 @@ receive(np_image_raw, 10);
 receive(nn_image_raw, 10);
 
 
+vid1 = vision.DeployableVideoPlayer;
+vid2 = vision.DeployableVideoPlayer;
+vid3 = vision.DeployableVideoPlayer;
+vid4 = vision.DeployableVideoPlayer;
 
 while true
     pp = readImage(pp_image_raw.LatestMessage);
     pn = readImage(pn_image_raw.LatestMessage);
     np = readImage(np_image_raw.LatestMessage);
     nn = readImage(nn_image_raw.LatestMessage);
-    ultra = [pp pn; np nn];
-    imshow(ultra);
+    vid1(pp);
+    vid2(pn);
+    vid3(np);
+    vid4(nn);
     waitfor(r);
-end
-
-
-////
-function rough
-% Create figure window and components
-
-fig = uifigure('Position',[100 100 350 275]);
-
-cg = uigauge(fig,'Position',[100 100 120 120]);
-
-sld = uislider(fig,...
-               'Position',[100 75 120 3],...
-               'ValueChangingFcn',@(sld,event) sliderMoving(event,cg));
-
-end
-
-% Create ValueChangingFcn callback
-function sliderMoving(event,cg)
-cg.Value = event.Value;
 end
