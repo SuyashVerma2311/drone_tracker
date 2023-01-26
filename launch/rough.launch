@@ -19,4 +19,6 @@
 
   <include file="$(find hector_quadrotor_gazebo)/launch/spawn_quadrotor.launch"/>
 
+  <node name="teleop" pkg="drone_tracker" type="teleop_ui.py" output="screen"/>
+
 </launch>
