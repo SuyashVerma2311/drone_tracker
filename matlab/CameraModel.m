@@ -1,16 +1,17 @@
 classdef CameraModel < handle
     properties
         frame
-        phi {mustBeNumeric}
-        theta {mustBeNumeric}
         drone_line
         drone_loc
-        frame_size = []
+        frame_size
+        origin
     end
 
     methods
-        function obj = CameraModel()
-
+        function obj = CameraModel(origin,frame_size)
+            obj.origin = origin;
+            obj.frame_size = frame_size;
+            obj.drone_loc = [0,0];
         end
 
         function findDrone(obj)
