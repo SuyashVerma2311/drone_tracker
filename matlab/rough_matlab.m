@@ -2,49 +2,50 @@ clc;
 clear;
 close all;
 
-rosshutdown
-% rosinit('http://ASUS-TF-Gaming-A15-FA506IC:11311/');
-rosinit('http://crazy-ubuntu:11311/');
+rosshutdown;
+rosinit('http://localhost:11311/');
+% rosinit('http://192.168.1.1:11311/');
 r = robotics.Rate(10);
 
-nn_image_raw = rossubscriber('/nn_cam/image_raw');
-np_image_raw = rossubscriber('/np_cam/image_raw');
-pn_image_raw = rossubscriber('/pn_cam/image_raw');
-pp_image_raw = rossubscriber('/pp_cam/image_raw');
+nn_sub = rossubscriber('nn_cam/image_raw');
 
-receive(pp_image_raw, 10);
-receive(pn_image_raw, 10);
-receive(np_image_raw, 10);
-receive(nn_image_raw, 10);
-
-
+vid1 = vision.DeployableVideoPlayer;
+% fig = uifigure;
 
 while true
-    pp = readImage(pp_image_raw.LatestMessage);
-    pn = readImage(pn_image_raw.LatestMessage);
-    np = readImage(np_image_raw.LatestMessage);
-    nn = readImage(nn_image_raw.LatestMessage);
-    ultra = [pp pn; np nn];
-    imshow(ultra);
+    nn_img = receive(nn_sub);
+    nn = readImage(nn_img);
+    nn_hsv = rgb2hsv(nn);
+
+    vid1(nn_hsv);
+%     h_l = uislider(fig,'Position',[100 45 100 3]);
+%     h_h = uislider(fig,'Position',[100 40 100 3]);
+%     s_l = uislider(fig,'Position',[100 35 100 3]);
+%     s_h = uislider(fig,'Position',[100 30 100 3]);
+%     v_l = uislider(fig,'Position',[100 25 100 3]);
+%     v_h = uislider(fig,'Position',[100 20 100 3]);
+
     waitfor(r);
 end
 
 
-////
-function rough
-% Create figure window and components
 
-fig = uifigure('Position',[100 100 350 275]);
 
-cg = uigauge(fig,'Position',[100 100 120 120]);
-
-sld = uislider(fig,...
-               'Position',[100 75 120 3],...
-               'ValueChangingFcn',@(sld,event) sliderMoving(event,cg));
-
-end
-
-% Create ValueChangingFcn callback
-function sliderMoving(event,cg)
-cg.Value = event.Value;
-end
+% 
+% function rough
+% % Create figure window and components
+% 
+% fig = uifigure('Position',[100 100 350 275]);
+% 
+% cg = uigauge(fig,'Position',[100 100 120 120]);
+% 
+% sld = uislider(fig,...
+%                'Position',[100 75 120 3],...
+%                'ValueChangingFcn',@(sld,event) sliderMoving(event,cg));
+% 
+% end
+% 
+% % Create ValueChangingFcn callback
+% function sliderMoving(event,cg)
+% cg.Value = event.Value;
+% end

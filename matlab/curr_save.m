@@ -2,20 +2,15 @@ clc;
 clear;
 close all;
 
-rosshutdown
-% rosinit('http://ASUS-TF-Gaming-A15-FA506IC:11311/');
-rosinit('http://crazy-ubuntu:11311/');
+rosshutdown;
+rosinit('http://localhost:11311/');
+% rosinit('http://crazy-ubuntu:11311/');
 r = robotics.Rate(10);
 
 nn_image_raw = rossubscriber('/nn_cam/image_raw');
 np_image_raw = rossubscriber('/np_cam/image_raw');
 pn_image_raw = rossubscriber('/pn_cam/image_raw');
 pp_image_raw = rossubscriber('/pp_cam/image_raw');
-
-receive(pp_image_raw, 10);
-receive(pn_image_raw, 10);
-receive(np_image_raw, 10);
-receive(nn_image_raw, 10);
 
 
 vid1 = vision.DeployableVideoPlayer;
@@ -24,13 +19,18 @@ vid3 = vision.DeployableVideoPlayer;
 vid4 = vision.DeployableVideoPlayer;
 
 while true
-    pp = readImage(pp_image_raw.LatestMessage);
-    pn = readImage(pn_image_raw.LatestMessage);
-    np = readImage(np_image_raw.LatestMessage);
-    nn = readImage(nn_image_raw.LatestMessage);
-    vid1(pp);
-    vid2(pn);
-    vid3(np);
-    vid4(nn);
+    nn_img = receive(nn_image_raw, 10);
+    np_img = receive(np_image_raw, 10);
+    pn_img = receive(pn_image_raw, 10);
+    pp_img = receive(pp_image_raw, 10);
+
+    nn = readImage(nn_img);
+    np = readImage(np_img);
+    pn = readImage(pn_img);
+    pp = readImage(pp_img);
+    vid1(nn);
+    vid2(np);
+    vid3(pn);
+    vid4(pp);
     waitfor(r);
 end

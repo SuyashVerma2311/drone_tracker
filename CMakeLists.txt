@@ -35,5 +35,5 @@ catkin_install_python(PROGRAMS scripts/rough_python.py scripts/teleop_ui.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 
-add_executable(drone_control src/drone_control.cpp)
-target_link_libraries(drone_control ${catkin_LIBRARIES})
+# add_executable(drone_control src/drone_control.cpp)
+# target_link_libraries(drone_control ${catkin_LIBRARIES})
