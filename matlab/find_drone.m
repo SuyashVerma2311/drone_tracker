@@ -1,6 +1,6 @@
-function drone_loc = find_drone(inputImg)
+function drone_loc = find_drone(inputImg, background)
     % Threshold image and produce the location of the drone.
-    mask = createMask(inputImg);
+    mask = im2bw(rgb2gray(imabsdiff(inputImg,background)),30/255);
 
     % Find center of the mask.
     stats = regionprops(mask);

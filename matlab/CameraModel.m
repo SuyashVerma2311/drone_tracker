@@ -7,20 +7,23 @@ classdef CameraModel < handle
         theta {mustBeNumeric}
         phi {mustBeNumeric}
         frame_size(1,3)
-        origin
+        origin(1,6)
+        background
     end
 
     methods
-        function obj = CameraModel(origin,frame_size)
+        function obj = CameraModel(origin,frame_size,back_location)
             obj.origin = origin;
             obj.frame_size = frame_size;
+            obj.background = imread(back_location);
         end
 
         function findDrone(obj)
-            obj.drone_loc = find_drone(obj.frame);
+            obj.drone_loc = find_drone(obj.frame, obj.background);
             obj.theta = (obj.drone_loc(1)-obj.frame_size(2)/2)/90;
             obj.phi = (obj.drone_loc(2)-obj.frame_size(1)/2)/54;
-            obj.drone_pose = sph2cart(obj.theta,obj.phi,4);
+            [a,b,c] = sph2cart(obj.theta,obj.phi,4);
+            obj.drone_pose = [a,b,c];
         end
 
         function generateLine(obj)
