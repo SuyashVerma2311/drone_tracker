@@ -17,10 +17,10 @@ r = robotics.Rate(30);
 
 
 %% 3. Create 4 Camera Objects & Subscribers
-nn_cam = CameraModel([-5,-5],[384,640,3]);
-np_cam = CameraModel([-5,5],[384,640,3]);
-pn_cam = CameraModel([5,-5],[384,640,3]);
-pp_cam = CameraModel([5,5],[384,640,3]);
+nn_cam = CameraModel([-5,-5,2,0,0,0.25*pi],[384,640,3]);
+np_cam = CameraModel([-5,5,2,0,0,-0.25*pi],[384,640,3]);
+pn_cam = CameraModel([5,-5,2,0,0,0.75*pi],[384,640,3]);
+pp_cam = CameraModel([5,5,2,0,0,-0.75*pi],[384,640,3]);
 
 nn_sub = rossubscriber('/nn_cam/image_raw');
 np_sub = rossubscriber('/np_cam/image_raw');
