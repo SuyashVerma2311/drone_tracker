@@ -40,11 +40,6 @@ for k = 1:length(t)
     b = [-5,5,2;drone_ph(end,:)];
     c = [5,-5,2;drone_ph(end,:)];
     d = [5,5,2;drone_ph(end,:)];
-    
-%     A = plot3(a(:,1),a(:,2),a(:,3),'b');
-%     B = plot3(b(:,1),b(:,2),b(:,3),'b');
-%     C = plot3(c(:,1),c(:,2),c(:,3),'b');
-%     D = plot3(d(:,1),d(:,2),d(:,3),'b');
 
     set(A,'xdata',a(:,1),'ydata',a(:,2),'zdata',a(:,3));
     set(B,'xdata',b(:,1),'ydata',b(:,2),'zdata',b(:,3));
