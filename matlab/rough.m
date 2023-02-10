@@ -24,16 +24,32 @@ trackHead = stem3(drone_ph(1),drone_ph(2),drone_ph(3),'-.or','filled');
 trackTail = plot3(drone_ph(1),drone_ph(2),drone_ph(3),'r','LineWidth',2);
 
 
+a = [-5,-5,2;drone_ph(end,:)];
+b = [-5,5,2;drone_ph(end,:)];
+c = [5,-5,2;drone_ph(end,:)];
+d = [5,5,2;drone_ph(end,:)];
+
+A = plot3(a(:,1),a(:,2),a(:,3),'b');
+B = plot3(b(:,1),b(:,2),b(:,3),'b');
+C = plot3(c(:,1),c(:,2),c(:,3),'b');
+D = plot3(d(:,1),d(:,2),d(:,3),'b');
+
+
 for k = 1:length(t)
     a = [-5,-5,2;drone_ph(end,:)];
     b = [-5,5,2;drone_ph(end,:)];
     c = [5,-5,2;drone_ph(end,:)];
     d = [5,5,2;drone_ph(end,:)];
     
-    A = plot3(a(:,1),a(:,2),a(:,3),'b');
-    B = plot3(b(:,1),b(:,2),b(:,3),'b');
-    C = plot3(c(:,1),c(:,2),c(:,3),'b');
-    D = plot3(d(:,1),d(:,2),d(:,3),'b');
+%     A = plot3(a(:,1),a(:,2),a(:,3),'b');
+%     B = plot3(b(:,1),b(:,2),b(:,3),'b');
+%     C = plot3(c(:,1),c(:,2),c(:,3),'b');
+%     D = plot3(d(:,1),d(:,2),d(:,3),'b');
+
+    set(A,'xdata',a(:,1),'ydata',a(:,2),'zdata',a(:,3));
+    set(B,'xdata',b(:,1),'ydata',b(:,2),'zdata',b(:,3));
+    set(C,'xdata',c(:,1),'ydata',c(:,2),'zdata',c(:,3));
+    set(D,'xdata',d(:,1),'ydata',d(:,2),'zdata',d(:,3));
 
     drone_ph = [drone_ph; [sin(t(k)) cos(t(k)) t(k)/6+1]];
 
@@ -41,5 +57,4 @@ for k = 1:length(t)
     set(trackHead,'xdata',drone_ph(end,1),'ydata',drone_ph(end,2),'zdata',drone_ph(end,3));
     pause(1/60);
 
-    delete(A); delete(B); delete(C); delete(D);
 end

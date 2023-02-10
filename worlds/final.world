@@ -130,8 +130,8 @@
           <camera name="nn_cam">
             <horizontal_fov>1.57079632679</horizontal_fov>
             <image>
-              <width>1280</width>
-              <height>768</height>
+              <width>640</width>
+              <height>384</height>
               <format>R8G8B8</format>
             </image>
             <clip>
@@ -199,8 +199,8 @@
           <camera name="np_cam">
             <horizontal_fov>1.57079632679</horizontal_fov>
             <image>
-              <width>1280</width>
-              <height>768</height>
+              <width>640</width>
+              <height>384</height>
               <format>R8G8B8</format>
             </image>
             <clip>
@@ -268,8 +268,8 @@
           <camera name="pp_cam">
             <horizontal_fov>1.57079632679</horizontal_fov>
             <image>
-              <width>1280</width>
-              <height>768</height>
+              <width>640</width>
+              <height>384</height>
               <format>R8G8B8</format>
             </image>
             <clip>
@@ -337,8 +337,8 @@
           <camera name="pn_cam">
             <horizontal_fov>1.57079632679</horizontal_fov>
             <image>
-              <width>1280</width>
-              <height>768</height>
+              <width>640</width>
+              <height>384</height>
               <format>R8G8B8</format>
             </image>
             <clip>
