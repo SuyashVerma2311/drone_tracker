@@ -17,10 +17,18 @@ r = robotics.Rate(30);
 
 
 %% 3. Create 4 Camera Objects & Subscribers
-nn_cam = CameraModel([-5,-5,2,0,0,0.25*pi],[384,640,3]);
-np_cam = CameraModel([-5,5,2,0,0,-0.25*pi],[384,640,3]);
-pn_cam = CameraModel([5,-5,2,0,0,0.75*pi],[384,640,3]);
-pp_cam = CameraModel([5,5,2,0,0,-0.75*pi],[384,640,3]);
+cam_params = [320,   0, 320.5; 
+                0, 320, 192.5; 
+                0,   0,    1];
+
+nn_cam = CameraModel([-5,-5,2,0,0,0.25*pi],[384,640,3], ...
+                     'backgrounds/nn_back.png',cam_params);
+np_cam = CameraModel([-5,5,2,0,0,-0.25*pi],[384,640,3], ...
+                     'backgrounds/np_back.png',cam_params);
+pn_cam = CameraModel([5,-5,2,0,0,0.75*pi],[384,640,3], ...
+                     'backgrounds/pn_back.png',cam_params);
+pp_cam = CameraModel([5,5,2,0,0,-0.75*pi],[384,640,3], ...
+                     'backgrounds/pp_back.png',cam_params);
 
 nn_sub = rossubscriber('/nn_cam/image_raw');
 np_sub = rossubscriber('/np_cam/image_raw');
@@ -35,20 +43,23 @@ GT_sub = rossubscriber('/ground_truth/state');
 t = -6:0.01:6;
 fig = figure(1); grid on; hold on; view(3);
 plot3(0.*t+5,t,0.*t,'b'); plot3(0.*t-5,t,0.*t,'b'); plot3(t,0.*t+5,0.*t,'b'); plot3(t,0.*t-5,0.*t,'b');
-fill3([-6,6,6,-6],[-6,-6,6,6],[0,0,0,0],'g'); alpha(0.3); % adss a green floor
+fill3([-6,6,6,-6],[-6,-6,6,6],[0,0,0,0],'g'); alpha(0.3); % adds a green floor
 cams = stem3(0,0,0,'--blacksquare','filled');
 set(cams,'xdata',[-5,-5,5,5],'ydata',[-5,5,-5,5],'zdata',[2,2,2,2]);
 zlim([0 3]); xlim([-6 6]); ylim([-6 6]);
 
 % Drone Plotting.
-drone_ph = [0,0,0];% Drone Place Holder
-trackHead = stem3(drone_ph(1),drone_ph(2),drone_ph(3),'-.or','filled');
-trackTail = plot3(drone_ph(1),drone_ph(2),drone_ph(3),'r','LineWidth',2);
+drone_plotter = [0,0,0];% Drone Place Holder
+gt_plotter = [0, 0, 0];
+trackHead = stem3(drone_plotter(1),drone_plotter(2),drone_plotter(3),'-.ob','filled');
+trackTail = plot3(drone_plotter(1),drone_plotter(2),drone_plotter(3),'b','LineWidth',2);
+gt_trackHead = stem3(gt_plotter(1),gt_plotter(2),gt_plotter(3),'-.or','filled');
+gt_trackTail = plot3(gt_plotter(1),gt_plotter(2),gt_plotter(3),'r','LineWidth',2);
 
-a = [-5,-5,2;drone_ph(end,:)];
-b = [-5,5,2;drone_ph(end,:)];
-c = [5,-5,2;drone_ph(end,:)];
-d = [5,5,2;drone_ph(end,:)];
+a = [-5,-5,2;drone_plotter(end,:)];
+b = [-5,5,2;drone_plotter(end,:)];
+c = [5,-5,2;drone_plotter(end,:)];
+d = [5,5,2;drone_plotter(end,:)];
 
 A = plot3(a(:,1),a(:,2),a(:,3),'b');
 B = plot3(b(:,1),b(:,2),b(:,3),'b');
@@ -71,38 +82,53 @@ while true
 
     
     %% 7. Compute the line equations from all objects
-    
-    
+    M1 = triangulate(nn_cam.drone_loc, np_cam.drone_loc, nn_cam.model, np_cam.model);
+    M2 = triangulate(nn_cam.drone_loc, pn_cam.drone_loc, nn_cam.model, pn_cam.model);
+    M3 = triangulate(nn_cam.drone_loc, pp_cam.drone_loc, nn_cam.model, pn_cam.model);
+
+    M = (M1 + M2 + M3) ./ 3;
+
+    nn_cam.computeLine();
+    np_cam.computeLine();
+    pn_cam.computeLine();
+    pp_cam.computeLine();
+
     %% 8. Find the closest point of all four lines
-    
-    
+%     v1 = nn_cam.line;
+%     v2 = np_cam.line;
+%     v3 = pn_cam.line;
+%     v4 = pp_cam.line;
+
     %% 9. %% %% Apply Kalman Filtering on the found data.
 
 
     %% 10. Plotting 
-    % Temporary % % % % % % %
-%     updated_x = drone_ph(end,1)+0.001;
-%     updated_y = drone_ph(end,2)+0.001;
-%     updated_z = drone_ph(end,3)+0.001;
-    updated_x = pp_cam.drone_pose(1);
-    updated_y = pp_cam.drone_pose(2);
-    updated_z = pp_cam.drone_pose(3);
-    % % % % % % % % % % % % %
+    drone_X = M(1);
+    drone_Y = M(2);
+    drone_Z = M(3);
 
-    drone_ph = [drone_ph; [updated_x updated_y updated_z]];
+    gt = GT_sub.receive();
+    gtX = gt.Pose.Pose.Position.X;
+    gtY = gt.Pose.Pose.Position.Y;
+    gtZ = gt.Pose.Pose.Position.Z;
 
-    a = [-5,-5,2;drone_ph(end,:)];
-    b = [-5,5,2;drone_ph(end,:)];
-    c = [5,-5,2;drone_ph(end,:)];
-    d = [5,5,2;drone_ph(end,:)];
+    drone_plotter = append(drone_plotter, [drone_X, drone_Y, drone_Z], 50, 'unlimited');
+    gt_plotter = append(gt_plotter, [gtX, gtY, gtZ], 50, 'unlimited');
+
+    a = [-5,-5,2;drone_plotter(end,:)];
+    b = [-5,5,2;drone_plotter(end,:)];
+    c = [5,-5,2;drone_plotter(end,:)];
+    d = [5,5,2;drone_plotter(end,:)];
 
     set(A,'xdata',a(:,1),'ydata',a(:,2),'zdata',a(:,3));
     set(B,'xdata',b(:,1),'ydata',b(:,2),'zdata',b(:,3));
     set(C,'xdata',c(:,1),'ydata',c(:,2),'zdata',c(:,3));
     set(D,'xdata',d(:,1),'ydata',d(:,2),'zdata',d(:,3));
 
-    set(trackTail,'xdata',drone_ph(:,1),'ydata',drone_ph(:,2),'zdata',drone_ph(:,3));
-    set(trackHead,'xdata',drone_ph(end,1),'ydata',drone_ph(end,2),'zdata',drone_ph(end,3));
+    set(trackTail,'xdata',drone_plotter(:,1),'ydata',drone_plotter(:,2),'zdata',drone_plotter(:,3));
+    set(trackHead,'xdata',drone_plotter(end,1),'ydata',drone_plotter(end,2),'zdata',drone_plotter(end,3));
+    set(gt_trackTail,'xdata',gt_plotter(:,1),'ydata',gt_plotter(:,2),'zdata',gt_plotter(:,3));
+    set(gt_trackHead,'xdata',gt_plotter(end,1),'ydata',gt_plotter(end,2),'zdata',gt_plotter(end,3));
 
     
     %% 12. Go back to 5th step
@@ -120,3 +146,16 @@ while true
 end
 
 rosshutdown;
+
+
+
+function out = append(in, appendend, size, mode)
+    % Instead of adding and adding... just append only to a certain limit.
+    if strcmp(mode,'limited')
+        % Perform shortening list.
+        if length(in) >= size-1
+            in = in(end-size+1);
+        end
+    end
+    out = [in; appendend];
+end
