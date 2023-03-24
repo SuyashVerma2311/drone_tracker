@@ -143,6 +143,14 @@
               <mean>0.0</mean>
               <stddev>0.007</stddev>
             </noise>
+            <lens>
+              <intrinsics>
+                <fx>320</fx>
+                <fy>320</fy>
+                <cx>320.5</cx>
+                <cy>192.5</cy>
+              </intrinsics>
+            </lens>
           </camera>
           <plugin name="camera_controller" filename="libgazebo_ros_camera.so">
             <alwaysOn>true</alwaysOn>
@@ -212,6 +220,14 @@
               <mean>0.0</mean>
               <stddev>0.007</stddev>
             </noise>
+            <lens>
+              <intrinsics>
+                <fx>320</fx>
+                <fy>320</fy>
+                <cx>320.5</cx>
+                <cy>192.5</cy>
+              </intrinsics>
+            </lens>
           </camera>
           <plugin name="camera_controller" filename="libgazebo_ros_camera.so">
             <alwaysOn>true</alwaysOn>
@@ -281,6 +297,14 @@
               <mean>0.0</mean>
               <stddev>0.007</stddev>
             </noise>
+            <lens>
+              <intrinsics>
+                <fx>320</fx>
+                <fy>320</fy>
+                <cx>320.5</cx>
+                <cy>192.5</cy>
+              </intrinsics>
+            </lens>
           </camera>
           <plugin name="camera_controller" filename="libgazebo_ros_camera.so">
             <alwaysOn>true</alwaysOn>
@@ -350,6 +374,14 @@
               <mean>0.0</mean>
               <stddev>0.007</stddev>
             </noise>
+            <lens>
+              <intrinsics>
+                <fx>320</fx>
+                <fy>320</fy>
+                <cx>320.5</cx>
+                <cy>192.5</cy>
+              </intrinsics>
+            </lens>
           </camera>
           <plugin name="camera_controller" filename="libgazebo_ros_camera.so">
             <alwaysOn>true</alwaysOn>

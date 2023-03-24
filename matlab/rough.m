@@ -2,6 +2,18 @@ clc;
 clear;
 close all;
 
+cam_params = [320,   0, 320; 
+                0, 320, 192; 
+                0,   0,  1];
+
+nn_cam = CameraModel([-5,-5,2,-0.5*pi,0.25*pi,0],[640,384,3], ...
+                     'backgrounds/nn_back.png',cam_params);
+np_cam = CameraModel([-5,5,1.5,0.5*pi,0.25*pi,pi],[640,384,3], ...
+                     'backgrounds/np_back.png',cam_params);
+pn_cam = CameraModel([5,-5,1.75,-0.5*pi,-0.25*pi,0],[640,384,3], ...
+                     'backgrounds/pn_back.png',cam_params);
+pp_cam = CameraModel([5,5,1.25,0.5*pi,-0.25*pi,pi],[640,384,3], ...
+                     'backgrounds/pp_back.png',cam_params);
 
 t = -6:0.01:6;
 
@@ -14,9 +26,13 @@ plot3(t,0.*t-5,0.*t,'b');
 fill3([-6,6,6,-6],[-6,-6,6,6],[0,0,0,0],'g');
 alpha(0.3);
 cams = stem3(0,0,0,'--blacksquare','filled');
-set(cams,'xdata',[-5,-5,5,5],'ydata',[-5,5,-5,5],'zdata',[2,2,2,2]);
+set(cams,'xdata',[-5,-5,5,5],'ydata',[-5,5,-5,5],'zdata',[2,1.5,1.75,1.25]);
 zlim([0 3]); xlim([-6 6]); ylim([-6 6]);
 
+plotCamera("AbsolutePose",rigidtform3d(nn_cam.R,nn_cam.T'),'Size',0.2,'Label','','AxesVisible',true);
+plotCamera("AbsolutePose",rigidtform3d(np_cam.R,np_cam.T'),'Size',0.2,'Label','','AxesVisible',true);
+plotCamera("AbsolutePose",rigidtform3d(pn_cam.R,pn_cam.T'),'Size',0.2,'Label','','AxesVisible',true);
+plotCamera("AbsolutePose",rigidtform3d(pp_cam.R,pp_cam.T'),'Size',0.2,'Label','','AxesVisible',true);
 
 
 drone_ph = [0,1,0];
@@ -25,9 +41,9 @@ trackTail = plot3(drone_ph(1),drone_ph(2),drone_ph(3),'r','LineWidth',2);
 
 
 a = [-5,-5,2;drone_ph(end,:)];
-b = [-5,5,2;drone_ph(end,:)];
-c = [5,-5,2;drone_ph(end,:)];
-d = [5,5,2;drone_ph(end,:)];
+b = [-5,5,1.5;drone_ph(end,:)];
+c = [5,-5,1.75;drone_ph(end,:)];
+d = [5,5,1.25;drone_ph(end,:)];
 
 A = plot3(a(:,1),a(:,2),a(:,3),'b');
 B = plot3(b(:,1),b(:,2),b(:,3),'b');
