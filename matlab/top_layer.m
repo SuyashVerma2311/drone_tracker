@@ -21,13 +21,13 @@ cam_params = [320,   0, 320.5;
                 0, 320, 192.5; 
                 0,   0,  1];
 
-nn_cam = CameraModel([-5,-5,2,-0.5*pi,0.25*pi,0],[640,384,3], ...
+nn_cam = CameraModel([-5,-5,2,3*pi/4,pi,pi/2],[640,384,3], ...
                      'backgrounds/nn_back.png',cam_params);
-np_cam = CameraModel([-5,5,1.5,0.5*pi,0.25*pi,pi],[640,384,3], ...
+np_cam = CameraModel([-5,5,1.5,pi/4,pi,pi/2],[640,384,3], ...
                      'backgrounds/np_back.png',cam_params);
-pn_cam = CameraModel([5,-5,1.75,-0.5*pi,-0.25*pi,0],[640,384,3], ...
+pn_cam = CameraModel([5,-5,1.75,-3*pi/4,pi,pi/2],[640,384,3], ...
                      'backgrounds/pn_back.png',cam_params);
-pp_cam = CameraModel([5,5,1.25,0.5*pi,-0.25*pi,pi],[640,384,3], ...
+pp_cam = CameraModel([5,5,1.25,-pi/4,pi,pi/2],[640,384,3], ...
                      'backgrounds/pp_back.png',cam_params);
 
 nn_sub = rossubscriber('/nn_cam/image_raw');
@@ -55,7 +55,7 @@ plotCamera("AbsolutePose",rigidtform3d(pp_cam.R,pp_cam.T'),'Size',0.2,'Label',''
 
 % Drone Plotting.
 drone_plotter = [0,0,0];% Drone Place Holder
-gt_plotter = [0, 0, 0];
+gt_plotter = [0,0,0];
 trackHead = stem3(drone_plotter(1),drone_plotter(2),drone_plotter(3),'-.ob','filled');
 trackTail = plot3(drone_plotter(1),drone_plotter(2),drone_plotter(3),'b','LineWidth',2);
 gt_trackHead = stem3(gt_plotter(1),gt_plotter(2),gt_plotter(3),'-.or','filled');
@@ -87,24 +87,19 @@ while true
 
     
     %% 7. Compute the line equations from all objects
-    M1 = triangulate(nn_cam.drone_loc, np_cam.drone_loc, nn_cam.model, np_cam.model);
-%     M2 = triangulate(nn_cam.drone_loc, pn_cam.drone_loc, nn_cam.model, pn_cam.model);
-%     M3 = triangulate(nn_cam.drone_loc, pp_cam.drone_loc, nn_cam.model, pn_cam.model);
-% 
-%     M = (M1 + M2 + M3) ./ 3
-    M = M1
-% 
-%     nn_cam.computeLine();
-%     np_cam.computeLine();
-%     pn_cam.computeLine();
-%     pp_cam.computeLine();
+    M1 = triangulate(nn_cam.drone_loc, np_cam.drone_loc, nn_cam.model, np_cam.model)
+    M2 = triangulate(nn_cam.drone_loc, pn_cam.drone_loc, nn_cam.model, pn_cam.model)
+    M3 = triangulate(nn_cam.drone_loc, pp_cam.drone_loc, nn_cam.model, pn_cam.model)
 
-%     M = M1
-%     disp(nn_cam.R);
+    M = (M1 + M2 + M3) ./ 3
 
-    nn_cam.drone_loc
-    np_cam.drone_loc
+    aaaa = (nn_cam.drone_loc(1)*2 - 640) / 640;
+    bbbb = (nn_cam.drone_loc(2)*2 - 384) / 384;
+    cccc = (np_cam.drone_loc(1)*2 - 640) / 640;
+    dddd = (np_cam.drone_loc(2)*2 - 384) / 384;
 
+    M = triangulate([aaaa bbbb],[cccc, dddd], nn_cam.model, np_cam.model)
+      
 
 
     %% 8. Find the closest point of all four lines
@@ -130,9 +125,9 @@ while true
     gt_plotter = append(gt_plotter, [gtX, gtY, gtZ], 50, 'unlimited');
 
     a = [-5,-5,2;drone_plotter(end,:)];
-    b = [-5,5,2;drone_plotter(end,:)];
-    c = [5,-5,2;drone_plotter(end,:)];
-    d = [5,5,2;drone_plotter(end,:)];
+    b = [-5,5,1.5;drone_plotter(end,:)];
+    c = [5,-5,1.75;drone_plotter(end,:)];
+    d = [5,5,1.25;drone_plotter(end,:)];
 
     set(A,'xdata',a(:,1),'ydata',a(:,2),'zdata',a(:,3));
     set(B,'xdata',b(:,1),'ydata',b(:,2),'zdata',b(:,3));

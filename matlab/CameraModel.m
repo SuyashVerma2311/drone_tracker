@@ -25,6 +25,7 @@ classdef CameraModel < handle
             Rz = [cos(origin(6)), -sin(origin(6)), 0; sin(origin(6)), cos(origin(6)), 0; 0, 0, 1];
             
             obj.R = Rx * Ry * Rz;
+            obj.R = eul2rotm(origin(4:6));
             obj.model = cam_params * [obj.R obj.T'];
         end
 
